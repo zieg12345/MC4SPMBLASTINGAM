@@ -70,15 +70,30 @@ def email_blast_bucket2_section():
             summary_df["{{chname}}"] = df["{{chname}}"]
             summary_df["{{agentcode}}"] = ""
             summary_df["{{ID}}"] = ""
-            summary_df["{{OB}}"] = df["Statement Balance (OB)"]
-            summary_df["{{MYP}}"] = df["Statement Overdue Amount (MYP)"]
-            summary_df["{{MAD}}"] = df["Statement Minimum Payment (MAD)"]
-            # Calculate OB+CF, MAD+CF, MYP+CF while preserving format
-            def safe_multiply(value, factor):
-                try:
-                    return str(float(value) * factor) if value.strip() else ""
-                except:
+            # Format original amount fields with commas
+            def format_amount(value):
+                if not value.strip():
                     return ""
+                try:
+                    num = float(value)
+                    decimal_places = len(value.split('.')[-1]) if '.' in value else 0
+                    return f"{num:,.{decimal_places}f}"
+                except:
+                    return value
+            summary_df["{{OB}}"] = df["Statement Balance (OB)"].apply(format_amount)
+            summary_df["{{MYP}}"] = df["Statement Overdue Amount (MYP)"].apply(format_amount)
+            summary_df["{{MAD}}"] = df["Statement Minimum Payment (MAD)"].apply(format_amount)
+            # Calculate OB+CF, MAD+CF, MYP+CF with commas and matching decimal places
+            def safe_multiply(value, factor):
+                if not value.strip():
+                    return ""
+                try:
+                    num = float(value)
+                    decimal_places = len(value.split('.')[-1]) if '.' in value else 0
+                    result = num * factor
+                    return f"{result:,.{decimal_places}f}"
+                except:
+                    return value
             summary_df["{{OB+CF}}"] = df["Statement Balance (OB)"].apply(lambda x: safe_multiply(x, 1.11))
             summary_df["{{MAD+CF}}"] = df["Statement Minimum Payment (MAD)"].apply(lambda x: safe_multiply(x, 1.11))
             summary_df["{{MYP+CF}}"] = df["Statement Overdue Amount (MYP)"].apply(lambda x: safe_multiply(x, 1.11))
@@ -147,8 +162,18 @@ def email_blast_bucket2_section():
                     ws.cell(row=1, column=col_num).value = header
                 for row_num, row in enumerate(summary_df.values, 2):
                     for col_num, value in enumerate(row, 1):
-                        ws.cell(row=row_num, column=col_num).value = str(value)
-                        ws.cell(row=row_num, column=col_num).number_format = '@'
+                        # Apply number format for amount columns with commas
+                        if header in ["{{OB}}", "{{MYP}}", "{{MAD}}", "{{OB+CF}}", "{{MAD+CF}}", "{{MYP+CF}}"]:
+                            try:
+                                decimal_places = len(value.replace(',', '').split('.')[-1]) if '.' in value else 0
+                                ws.cell(row=row_num, column=col_num).value = float(value.replace(',', '')) if value else 0.0
+                                ws.cell(row=row_num, column=col_num).number_format = f'#,##0.{"0" * decimal_places}'
+                            except:
+                                ws.cell(row=row_num, column=col_num).value = value
+                                ws.cell(row=row_num, column=col_num).number_format = '@'
+                        else:
+                            ws.cell(row=row_num, column=col_num).value = str(value)
+                            ws.cell(row=row_num, column=col_num).number_format = '@'
                 wb.save(output)
                 output.seek(0)
                 today = datetime.now().strftime("%B %d %Y")
