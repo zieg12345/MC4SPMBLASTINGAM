@@ -162,4 +162,4 @@ else:
 
         st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="footer">Viber Blast Uploader v1.3 | Aug 06, 2025 15:28 PM PST</div>', unsafe_allow_html=True)
+    st.markdown('<div class="footer">Viber Blast Uploader v1.3 | Aug 07, 2025 07:55 AM PHT</div>', unsafe_allow_html=True)
