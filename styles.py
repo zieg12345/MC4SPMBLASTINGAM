@@ -2,12 +2,8 @@ def get_css():
     return """
     <style>
     .main-content {
-        background-image: url('https://images7.alphacoders.com/139/1398431.jpg');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        min-height: 100vh;
         padding: 20px;
+        background-color: #f5f5f5;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         color: #2b2b2b;
@@ -132,4 +128,5 @@ motivational_quotes = [
     "No age can stop you from pursuing new dreams or crafting fresh ambitions. – Zieg",
     "The greatest prize of your achievements is the person you grow into. – Zieg",
     "Launch from your current place, with your present tools, and give your all. – Zieg"
+
 ]
