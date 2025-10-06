@@ -9,6 +9,7 @@ from email_blast_sbf_salad import email_blast_sbf_salad_section
 from email_blast_sbf_pl import email_blast_sbf_pl_section
 from live_inbound_monitoring import live_inbound_monitoring_section
 from auto_statistics import auto_statistics_section
+from mc4_ptp import mc4_ptp_section
 import random
 
 # Initialize session state
@@ -136,11 +137,11 @@ else:
             bucket_option = st.selectbox(
                 "Select Campaign",
                 ["Bucket 2 with sequence template", "Bucket 4 Generic Template", "LEVEL 1 NEGATIVE ACCOUNTS", 
-                 "LEVEL 6 NEGATIVE ACCOUNTS", "SBF SALAD NEGATIVE ACCOUNT", "SBF PL NEGATIVE ACCOUNTS"],
+                 "LEVEL 6 NEGATIVE ACCOUNTS", "SBF SALAD NEGATIVE ACCOUNT", "SBF PL NEGATIVE ACCOUNTS", "MC4 PTP"],
                 help="Choose the bucket for email blast processing",
                 key="email_bucket_select",
                 index=["Bucket 2 with sequence template", "Bucket 4 Generic Template", "LEVEL 1 NEGATIVE ACCOUNTS", 
-                       "LEVEL 6 NEGATIVE ACCOUNTS", "SBF SALAD NEGATIVE ACCOUNT", "SBF PL NEGATIVE ACCOUNTS"].index(st.session_state.email_bucket_option)
+                       "LEVEL 6 NEGATIVE ACCOUNTS", "SBF SALAD NEGATIVE ACCOUNT", "SBF PL NEGATIVE ACCOUNTS", "MC4 PTP"].index(st.session_state.email_bucket_option)
             )
             st.session_state.email_bucket_option = bucket_option
             if bucket_option == "Bucket 2 with sequence template":
@@ -155,6 +156,8 @@ else:
                 email_blast_sbf_salad_section()
             elif bucket_option == "SBF PL NEGATIVE ACCOUNTS":
                 email_blast_sbf_pl_section()
+            elif bucket_option == "MC4 PTP":
+                mc4_ptp_section()
         elif st.session_state.button3_clicked:
             live_inbound_monitoring_section()
         elif st.session_state.button4_clicked:
