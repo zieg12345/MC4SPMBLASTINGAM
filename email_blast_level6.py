@@ -38,7 +38,7 @@ def email_blast_level6_section():
                     'Email': df['Email'],
                     '{{chname}}': df['Name'],
                     '{{product}}': df['Product Type'],
-                    '{{agentcode}}': 'PJND6',
+                    '{{agentcode}}': 'PJND',
                     'Client Name': df['Client Name'],
                     'Account No.': df['Account No.'],
                     'Financing/Card No.': df['Financing/Card No.']
@@ -89,4 +89,5 @@ def email_blast_level6_section():
         except Exception as e:
             st.error(f"Error: {str(e)}")
     else:
+
         st.info("Please upload an Excel file to generate the summary table.")

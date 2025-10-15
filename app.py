@@ -1,168 +1,150 @@
 import streamlit as st
-from styles import get_css, motivational_quotes
-from viber_blast import viber_blast_section
-from email_blast_bucket2 import email_blast_bucket2_section
-from email_blast_bucket4 import email_blast_bucket4_section
-from email_blast_level1 import email_blast_level1_section
-from email_blast_level6 import email_blast_level6_section
-from email_blast_sbf_salad import email_blast_sbf_salad_section
-from email_blast_sbf_pl import email_blast_sbf_pl_section
-from live_inbound_monitoring import live_inbound_monitoring_section
-from auto_statistics import auto_statistics_section
-from mc4_ptp import mc4_ptp_section
+from datetime import datetime
+import styles
+import viber_blast
+import email_blast_bucket2
+import email_blast_bucket4
+import email_blast_level1
+import email_blast_level6
+import email_blast_sbf_salad
+import email_blast_sbf_pl
+import mc4_ptp
+import auto_statistics
+import live_inbound_monitoring
 import random
+import email_blast_sbf_new_endo
 
-# Initialize session state
-if 'button1_clicked' not in st.session_state:
-    st.session_state.button1_clicked = False
-if 'button2_clicked' not in st.session_state:
-    st.session_state.button2_clicked = False
-if 'button3_clicked' not in st.session_state:
-    st.session_state.button3_clicked = False
-if 'button4_clicked' not in st.session_state:
-    st.session_state.button4_clicked = False
-if 'uploaded_file' not in st.session_state:
-    st.session_state.uploaded_file = None
-if 'collector_file' not in st.session_state:
-    st.session_state.collector_file = None
-if 'menu_open' not in st.session_state:
-    st.session_state.menu_open = False
-if 'email_bucket_option' not in st.session_state:
-    st.session_state.email_bucket_option = "Bucket 2 with sequence template"
-if 'auto_stats_option' not in st.session_state:
-    st.session_state.auto_stats_option = "SBF NEGATIVE AUTOSTATS"
-if 'logged_in' not in st.session_state:
-    st.session_state.logged_in = False
-if 'login_error' not in st.session_state:
-    st.session_state.login_error = False
-
-# Define credentials
+# Hardcoded credentials
 USERNAME = "zmjepollo"
 PASSWORD = "Hepollo_021"
 
-# Login function
-def check_login():
-    st.markdown('<div class="main-content">', unsafe_allow_html=True)
-    st.title("Login to WORKLOADS-AUTOMATED")
-    username = st.text_input("Username", key="username_input")
-    password = st.text_input("Password", type="password", key="password_input")
+# Set page configuration
+st.set_page_config(
+    page_title="WORKLOADS-AUTOMATED",
+    page_icon="📊",
+    layout="wide"
+)
+
+# Apply custom CSS
+st.markdown(styles.custom_css, unsafe_allow_html=True)
+
+# Initialize session state for login
+if 'logged_in' not in st.session_state:
+    st.session_state.logged_in = False
+
+# Login section
+if not st.session_state.logged_in:
+    st.header("Login to WORKLOADS-AUTOMATED")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    
     if st.button("Login"):
         if username == USERNAME and password == PASSWORD:
             st.session_state.logged_in = True
-            st.session_state.login_error = False
+            st.success("Logged in successfully!")
             st.rerun()
         else:
-            st.session_state.login_error = True
-    if st.session_state.login_error:
-        st.error("Invalid username or password. Please try again.")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# Main app logic
-if not st.session_state.logged_in:
-    check_login()
+            st.error("Invalid username or password")
 else:
-    # Set page configuration
-    st.set_page_config(page_title="WORKLOADS-AUTOMATED", page_icon="📊", layout="wide")
-
-    # Apply custom CSS
-    st.markdown(get_css(), unsafe_allow_html=True)
-
-    # Select a random quote
-    random_quote = random.choice(motivational_quotes)
-
-    # Header section
-    col1, col2, col3 = st.columns([1, 3, 1])
-    with col2:
-        st.title(random_quote)
+    # Display motivational quote
+    st.markdown(f"<div class='quote-box'>{random.choice(styles.motivational_quotes)}</div>", unsafe_allow_html=True)
 
     # Sidebar with burger menu
     with st.sidebar:
-        if st.session_state.menu_open:
-            if st.button("✕ Close", key="close_menu", help="Close the menu"):
-                st.session_state.menu_open = False
-        else:
-            if st.button("☰", key="burger_menu", help="Open the menu"):
-                st.session_state.menu_open = True
+        st.markdown(
+            """
+            <style>
+            .sidebar .sidebar-content {
+                background-color: #f0f2f6;
+            }
+            .burger-menu {
+                font-size: 24px;
+                cursor: pointer;
+                padding: 10px;
+                background-color: #007bff;
+                color: white;
+                text-align: center;
+                border-radius: 5px;
+            }
+            .burger-menu:hover {
+                background-color: #0056b3;
+            }
+            </style>
+            <div class="burger-menu">☰ Menu</div>
+            """,
+            unsafe_allow_html=True
+        )
 
-        if st.session_state.menu_open:
-            st.markdown('<div class="sidebar-content active">', unsafe_allow_html=True)
-            if st.button("VIBER BLAST", help="Access Viber Blast CSV Uploader"):
-                st.session_state.button1_clicked = True
-                st.session_state.button2_clicked = False
-                st.session_state.button3_clicked = False
-                st.session_state.button4_clicked = False
-                st.session_state.uploaded_file = None
-                st.session_state.collector_file = None
-            if st.button("EMAIL BLAST", help="Access Email Blast File Uploader"):
-                st.session_state.button1_clicked = False
-                st.session_state.button2_clicked = True
-                st.session_state.button3_clicked = False
-                st.session_state.button4_clicked = False
-                st.session_state.uploaded_file = None
-                st.session_state.collector_file = None
-            if st.button("LIVE INBOUND MONITORING", help="Access MC4 Blasting Monitoring Dashboard"):
-                st.session_state.button1_clicked = False
-                st.session_state.button2_clicked = False
-                st.session_state.button3_clicked = True
-                st.session_state.button4_clicked = False
-                st.session_state.uploaded_file = None
-                st.session_state.collector_file = None
-            if st.button("AUTO STATISTICS", help="Access Auto Statistics Dashboard"):
-                st.session_state.button1_clicked = False
-                st.session_state.button2_clicked = False
-                st.session_state.button3_clicked = False
-                st.session_state.button4_clicked = True
-                st.session_state.uploaded_file = None
-                st.session_state.collector_file = None
-            if st.button("Logout", help="Log out of the application"):
-                st.session_state.logged_in = False
-                st.session_state.login_error = False
-                st.rerun()
-            st.markdown('</div>', unsafe_allow_html=True)
-        else:
-            st.markdown('<div class="sidebar-content">', unsafe_allow_html=True)
-            st.markdown('</div>', unsafe_allow_html=True)
+        # Dropdown menu for selecting options
+        option = st.selectbox(
+            "Select an option:",
+            [
+                "VIBER BLAST",
+                "EMAIL BLAST",
+                "LIVE INBOUND MONITORING",
+                "AUTO STATISTICS"
+            ],
+            key="main_option"
+        )
 
-    # Main content
-    with st.container():
-        st.markdown('<div class="main-content">', unsafe_allow_html=True)
-        
-        if not (st.session_state.button1_clicked or st.session_state.button2_clicked or 
-                st.session_state.button3_clicked or st.session_state.button4_clicked):
-            st.subheader("Welcome")
-            st.write("Click the ☰ menu in the sidebar and select a feature to begin.")
-        elif st.session_state.button1_clicked:
-            viber_blast_section()
-        elif st.session_state.button2_clicked:
-            bucket_option = st.selectbox(
-                "Select Campaign",
-                ["Bucket 2 with sequence template", "Bucket 4 Generic Template", "LEVEL 1 NEGATIVE ACCOUNTS", 
-                 "LEVEL 6 NEGATIVE ACCOUNTS", "SBF SALAD NEGATIVE ACCOUNT", "SBF PL NEGATIVE ACCOUNTS", "MC4 PTP"],
-                help="Choose the bucket for email blast processing",
-                key="email_bucket_select",
-                index=["Bucket 2 with sequence template", "Bucket 4 Generic Template", "LEVEL 1 NEGATIVE ACCOUNTS", 
-                       "LEVEL 6 NEGATIVE ACCOUNTS", "SBF SALAD NEGATIVE ACCOUNT", "SBF PL NEGATIVE ACCOUNTS", "MC4 PTP"].index(st.session_state.email_bucket_option)
-            )
-            st.session_state.email_bucket_option = bucket_option
-            if bucket_option == "Bucket 2 with sequence template":
-                email_blast_bucket2_section()
-            elif bucket_option == "Bucket 4 Generic Template":
-                email_blast_bucket4_section()
-            elif bucket_option == "LEVEL 1 NEGATIVE ACCOUNTS":
-                email_blast_level1_section()
-            elif bucket_option == "LEVEL 6 NEGATIVE ACCOUNTS":
-                email_blast_level6_section()
-            elif bucket_option == "SBF SALAD NEGATIVE ACCOUNT":
-                email_blast_sbf_salad_section()
-            elif bucket_option == "SBF PL NEGATIVE ACCOUNTS":
-                email_blast_sbf_pl_section()
-            elif bucket_option == "MC4 PTP":
-                mc4_ptp_section()
-        elif st.session_state.button3_clicked:
-            live_inbound_monitoring_section()
-        elif st.session_state.button4_clicked:
-            auto_statistics_section()
-
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    st.markdown('<div class="footer">Viber Blast Uploader v1.3 | Aug 07, 2025 07:55 AM PHT</div>', unsafe_allow_html=True)
+    # Conditional rendering based on selected option
+    if option == "VIBER BLAST":
+        viber_blast.viber_blast_section()
+    elif option == "EMAIL BLAST":
+        email_option = st.selectbox(
+            "Select Email Blast Type:",
+            [
+                "BUCKET 2",
+                "BUCKET 4",
+                "LEVEL 1 NEGATIVE ACCOUNT",
+                "LEVEL 6 NEGATIVE ACCOUNT",
+                "SBF SALAD NEGATIVE ACCOUNT",
+                "SBF PL NEGATIVE ACCOUNT",
+                "MC4 PTP",
+                "SBF NEW ENDO"
+            ],
+            key="email_blast_option"
+        )
+        if email_option == "BUCKET 2":
+            email_blast_bucket2.email_blast_bucket2_section()
+        elif email_option == "BUCKET 4":
+            email_blast_bucket4.email_blast_bucket4_section()
+        elif email_option == "LEVEL 1 NEGATIVE ACCOUNT":
+            email_blast_level1.email_blast_level1_section()
+        elif email_option == "LEVEL 6 NEGATIVE ACCOUNT":
+            email_blast_level6.email_blast_level6_section()
+        elif email_option == "SBF SALAD NEGATIVE ACCOUNT":
+            email_blast_sbf_salad.email_blast_sbf_salad_section()
+        elif email_option == "SBF PL NEGATIVE ACCOUNT":
+            email_blast_sbf_pl.email_blast_sbf_pl_section()
+        elif email_option == "MC4 PTP":
+            mc4_ptp.mc4_ptp_section()
+        elif email_option == "SBF NEW ENDO":
+            email_blast_sbf_new_endo.email_blast_sbf_new_endo_section()
+    elif option == "LIVE INBOUND MONITORING":
+        live_inbound_monitoring.live_inbound_monitoring_section()
+    elif option == "AUTO STATISTICS":
+        auto_option = st.selectbox(
+            "Select Auto Statistics Type:",
+            [
+                "SBF NEGATIVE AUTOSTATS",
+                "L1-L6 NEGATIVE AUTOSTATS",
+                "SBF NEW ENDO"
+            ],
+            key="auto_statistics_option"
+        )
+        if auto_option == "SBF NEGATIVE AUTOSTATS":
+            auto_statistics.auto_statistics_section()
+        elif auto_option == "L1-L6 NEGATIVE AUTOSTATS":
+            auto_statistics.auto_statistics_section()
+        elif auto_option == "SBF NEW ENDO":
+            auto_statistics.auto_statistics_sbf_new_endo_section()
+    # Footer
+    st.markdown(
+        f"""
+        <div class='footer'>
+            <p>WORKLOADS-AUTOMATED v1.0 | Last updated: {datetime.now().strftime('%B %d, %Y %I:%M %p PST')}</p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )

@@ -11,7 +11,7 @@ def email_blast_sbf_new_endo_section():
         "📤 Choose SBF NEW ENDO Excel file",
         type=["xlsx"],
         key="sbf_new_endo_uploader",
-        help="Upload an Excel Workbook (.xlsx) with columns: Account No., Name, Email, Collector"
+        help="Upload an Excel Workbook (.xlsx) with columns: Account No., Name, Email, Collector, Financing/Card No."
     )
 
     if uploaded_file is not None:
@@ -31,7 +31,7 @@ def email_blast_sbf_new_endo_section():
             df = df.fillna("")
             df.columns = df.columns.str.strip()
 
-            required_columns = ["Account No.", "Name", "Email", "Collector"]
+            required_columns = ["Account No.", "Name", "Email", "Collector", "Financing/Card No."]
             missing_columns = [col for col in required_columns if col not in df.columns]
             if missing_columns:
                 st.error(f"The following required columns are missing: {', '.join(missing_columns)}")
@@ -48,7 +48,9 @@ def email_blast_sbf_new_endo_section():
                 "{{email}}": df["Email"],
                 "{{chname}}": df["Name"],
                 "{{agentcode}}": df["Collector"],
-                "{{ID}}": "SCCO"
+                "{{ID}}": "SCCO",
+                "Account No.": df["Account No."],
+                "Financing/Card No.": df["Financing/Card No."]
             })
 
             st.subheader("Summary Table")
@@ -58,6 +60,7 @@ def email_blast_sbf_new_endo_section():
             st.info(f"Unique Emails: {len(summary_df['{{email}}'].unique())}")
             st.info(f"Unique Names: {len(summary_df['{{chname}}'].unique())}")
             st.info(f"Unique Accounts: {len(df['Account No.'].unique())}")
+            st.info(f"Unique Financing/Card Nos.: {len(df['Financing/Card No.'].unique())}")
 
             output = BytesIO()
             wb = Workbook()
