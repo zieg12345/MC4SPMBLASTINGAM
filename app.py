@@ -1,5 +1,7 @@
+# app.py
 import streamlit as st
 from datetime import datetime
+import pytz
 import styles
 import viber_blast
 import email_blast_bucket2
@@ -13,6 +15,7 @@ import auto_statistics
 import live_inbound_monitoring
 import random
 import email_blast_sbf_new_endo
+import sms_blasting  # <-- NEW IMPORT
 
 # Hardcoded credentials
 USERNAME = "zmjepollo"
@@ -21,7 +24,7 @@ PASSWORD = "Hepollo_021"
 # Set page configuration
 st.set_page_config(
     page_title="WORKLOADS-AUTOMATED",
-    page_icon="📊",
+    page_icon="Chart",
     layout="wide"
 )
 
@@ -70,7 +73,7 @@ else:
                 background-color: #0056b3;
             }
             </style>
-            <div class="burger-menu">☰ Menu</div>
+            <div class="burger-menu">Menu</div>
             """,
             unsafe_allow_html=True
         )
@@ -80,6 +83,7 @@ else:
             "Select an option:",
             [
                 "VIBER BLAST",
+                "SMS BLASTING",        # <-- NEW OPTION
                 "EMAIL BLAST",
                 "LIVE INBOUND MONITORING",
                 "AUTO STATISTICS"
@@ -90,6 +94,8 @@ else:
     # Conditional rendering based on selected option
     if option == "VIBER BLAST":
         viber_blast.viber_blast_section()
+    elif option == "SMS BLASTING":  # <-- NEW SECTION
+        sms_blasting.sms_blasting_section()
     elif option == "EMAIL BLAST":
         email_option = st.selectbox(
             "Select Email Blast Type:",
@@ -134,16 +140,17 @@ else:
             key="auto_statistics_option"
         )
         if auto_option == "SBF NEGATIVE AUTOSTATS":
-            auto_statistics.auto_statistics_section()
+            auto_statistics.auto_statistics_section(stats_option="SBF NEGATIVE AUTOSTATS")
         elif auto_option == "L1-L6 NEGATIVE AUTOSTATS":
-            auto_statistics.auto_statistics_section()
+            auto_statistics.auto_statistics_section(stats_option="L1-L6 NEGATIVE AUTOSTATS")
         elif auto_option == "SBF NEW ENDO":
             auto_statistics.auto_statistics_sbf_new_endo_section()
+
     # Footer
     st.markdown(
         f"""
         <div class='footer'>
-            <p>WORKLOADS-AUTOMATED v1.0 | Last updated: {datetime.now().strftime('%B %d, %Y %I:%M %p PST')}</p>
+            <p>WORKLOADS-AUTOMATED v1.0 | Last updated: {datetime.now(pytz.timezone('Asia/Manila')).strftime('%B %d, %Y %I:%M %p PHT')}</p>
         </div>
         """,
         unsafe_allow_html=True
